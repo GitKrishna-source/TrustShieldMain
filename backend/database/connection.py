@@ -30,7 +30,11 @@ _db = None
 async def connect_to_mongo() -> None:
     """Open the Motor client and select the default database."""
     global _client, _db
-    _client = AsyncIOMotorClient(MONGO_URL)
+    _client = AsyncIOMotorClient(MONGO_URL, serverSelectionTimeoutMS=5000)
+    
+    # Ensure topology is discovered and connection is stable before continuing
+    await _client.admin.command('ping')
+    
     _db = _client[DATABASE_NAME]
     print(f"[DB] Connected to MongoDB at {MONGO_URL}/{DATABASE_NAME}")
 

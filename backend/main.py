@@ -22,7 +22,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from starlette.requests import Request
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from api import alerts_router, dashboard_router, events_router, users_router
+from api import alerts_router, auth_router, dashboard_router, events_router, users_router
 from database.connection import close_mongo_connection, connect_to_mongo
 from data.seed_data import seed_database
 from ml.baseline_engine import rebuild_all_baselines
@@ -66,6 +66,7 @@ app.add_middleware(
 
 # ── Register routers ─────────────────────────────────────────────────────
 
+app.include_router(auth_router, prefix="/api")
 app.include_router(events_router, prefix="/api")
 app.include_router(users_router, prefix="/api")
 app.include_router(alerts_router, prefix="/api")

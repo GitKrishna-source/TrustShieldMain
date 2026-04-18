@@ -139,11 +139,11 @@ async def seed_database() -> Dict[str, Any]:
     """
     db = get_database()
 
-    # Clear existing data
+    # Clear existing data without dropping schema
     for col_name in [USERS_COLLECTION, EVENTS_COLLECTION, BASELINES_COLLECTION,
                      ANOMALIES_COLLECTION, ALERTS_COLLECTION]:
-        await db[col_name].drop()
-    print("[SEED] Cleared existing collections.")
+        await db[col_name].delete_many({})
+    print("[SEED] Cleared existing collections (deleted documents).")
 
     # ── 1. Insert users ───────────────────────────────────────────────
     user_docs = []

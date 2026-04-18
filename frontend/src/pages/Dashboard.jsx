@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Shield, Activity, Users, AlertTriangle } from 'lucide-react';
 import { getDashboardOverview, getAnomalyTrends, getTopRisks } from '../services/api';
 import { Line } from 'react-chartjs-2';
+import { Link } from 'react-router-dom';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -44,7 +45,7 @@ const Dashboard = () => {
         if (trendsData && trendsData.trends) setTrends(trendsData.trends);
         if (risksData && risksData.users) setTopRisks(risksData.users);
       } catch (err) {
-        console.error("Failed to fetch dashboard data.");
+        console.error("Failed to fetch dashboard data.", err);
       } finally {
         setLoading(false);
       }
@@ -77,8 +78,8 @@ const Dashboard = () => {
       title: { display: false }
     },
     scales: {
-      y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } },
-      x: { grid: { color: 'rgba(255,255,255,0.05)' } }
+      y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.5)' } },
+      x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.5)' } }
     }
   };
 
@@ -91,10 +92,10 @@ const Dashboard = () => {
 
       {/* KPI Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '24px' }}>
-        <StatCard title="Active Users" value={stats.active_users} icon={Users} colorClass="text-[#06B6D4]" />
-        <StatCard title="Total Events (24h)" value={stats.events_last_24h} icon={Activity} colorClass="text-[#6366F1]" />
-        <StatCard title="Anomalies (24h)" value={stats.anomalies_last_24h} icon={AlertTriangle} colorClass="text-[#F97316]" />
-        <StatCard title="Open Alerts" value={stats.open_alerts} icon={Shield} colorClass="text-[#EF4444]" />
+        <StatCard title="Active Users" value={stats.active_users} icon={Users} colorClass="color-cyan" />
+        <StatCard title="Total Events (24h)" value={stats.events_last_24h} icon={Activity} colorClass="color-primary" />
+        <StatCard title="Anomalies (24h)" value={stats.anomalies_last_24h} icon={AlertTriangle} colorClass="color-orange" />
+        <StatCard title="Open Alerts" value={stats.open_alerts} icon={Shield} colorClass="color-red" />
       </div>
 
       {/* Main Charts & Lists */}
@@ -112,8 +113,12 @@ const Dashboard = () => {
             {topRisks.map(user => (
               <div key={user.user_id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px' }}>
                 <div>
-                  <div style={{ fontWeight: 600 }}>{user.user_id}</div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{user.anomaly_count} Anomalies</div>
+                  <Link to={`/users/${user.user_id}`} style={{ fontWeight: 600, color: '#fff', textDecoration: 'none' }}>
+                    {user.user_id}
+                  </Link>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    {user.anomaly_count} Anomalies (Score: {user.risk_score})
+                  </div>
                 </div>
                 <span className={`badge badge-${user.risk_level.toLowerCase()}`}>
                   {user.risk_level}
