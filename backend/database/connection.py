@@ -8,11 +8,16 @@ application startup and closed on shutdown.
 
 from motor.motor_asyncio import AsyncIOMotorClient
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 # ---------------------------------------------------------------------------
 # Module‑level state
 # ---------------------------------------------------------------------------
-MONGO_URL: str = "mongodb://localhost:27017"
-DATABASE_NAME: str = "insider_threat_db"
+MONGO_URL: str = os.getenv("MONGO_URL", "mongodb://localhost:27017")
+DATABASE_NAME: str = os.getenv("DATABASE_NAME", "insider_threat_db")
 
 _client: AsyncIOMotorClient | None = None
 _db = None
