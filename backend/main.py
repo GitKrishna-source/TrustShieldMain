@@ -122,9 +122,11 @@ async def serve_spa(full_path: str):
     index_file = os.path.join(frontend_dist, "index.html")
     if os.path.exists(index_file):
         return FileResponse(index_file)
-    return {"detail": "Frontend not built"}
+    # return {"detail": "Frontend not built"}
 
-
+    @app.get("/")
+    def home():
+        return {"message": "Backend running 🚀"}
 # ── Run with uvicorn ─────────────────────────────────────────────────────
 
 if __name__ == "__main__":
