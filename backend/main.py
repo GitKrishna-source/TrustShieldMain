@@ -132,3 +132,14 @@ async def serve_spa(full_path: str):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+
+
+    from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+# Sab routes ke BAAD yeh add karo
+app.mount("/assets", StaticFiles(directory="dist/assets"), name="assets")
+
+@app.get("/{full_path:path}")
+async def serve_frontend(full_path: str):
+    return FileResponse("dist/index.html")
